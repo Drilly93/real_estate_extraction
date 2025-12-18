@@ -1,0 +1,97 @@
+# Real Estate Data Acquisition & Price Prediction (Pipeline)
+
+## Description du projet
+**Objectif** : Construire un pipeline complet de traitement et d’enrichissement des données immobilières en France, depuis le téléchargement des données brutes jusqu’à la génération d’un dataset final prêt pour la modélisation prédictive des prix de l’immobilier en machine learning.
+
+La pipeline intègre plusieurs sources de données, notamment les valeurs foncières (DVF), les points d’intérêt géographiques (OpenStreetMap), les indicateurs macro-économiques (Banque de France) et les statistiques socio-économiques (INSEE).
+
+### Installation des dependances
+pip install -r requirements.txt
+
+## Ordre d’exécution des scripts
+
+Executer sequentiellement les scripts suivants dans l’ordre indiqué pour reproduire le pipeline complet de traitement des données immobilières :
+
+>>> python telechargement_valeur_fonciere.py  
+
+>>> python traitement_open_street_map.py  
+
+>>> python traitement_economie_global.py  
+
+>>> python fusion_vf_eco_insee.py  
+
+>>> python fin_nettoyage.py  
+
+## Fichier generes : 
+
+Tous les fichiers generes sont situes dans le dossier data/
+Pour executer le pipeline complet, il faut garder l'arborescence presente dans le git ( et les fichiers associes ) :
+
+**traitement_open_street_map.py** : 
+-> ValeursFoncieresParDepartement
+-> ValeursFoncieresParDepartement/<code_departement>
+-> ValeursFoncieresParDepartement/<code_departement> / <code_departement>.csv
+-> DataFrameFinal
+-> DataFrameFinal/DataFrame_VF
+-> DataFrameFinal/DataFrame_VF/df_vf.parquet
+
+**traitement_open_street_map.py** :
+-> OpenStreetMap/france-latest.osm.pbf
+-> OpenStreetMap/OSM_triee
+-> OpenStreetMap/OSM_triee/<POI>.parquet
+-> DataFrameFinal
+-> DataFrameFinal/DataFrame_VF+OSM
+-> DataFrameFinal/DataFrame_VF+OSM/df_vf_oms.parquet
+
+**traitement_economie_global.py** :
+-> Economie_Globale/df_eco.csv
+
+**fusion_vf_eco_insee.py**:
+-> DataFrameFinal/DataFrame_VF+OSM+ECO+INSEE
+-> DataFrameFinal/DataFrame_VF+OSM+ECO+INSEE/df_vf_oms_eco_insee.parquet
+
+**fin_nettoyage.py** :
+-> DataFrameFinal/df_final_propre.parquet
+
+
+## Details des fichiers 
+
+**config.py** : Fichier central de configuration contenant les chemins, constantes et emplacements des fichiers d’entrée/sortie utilisés par l’ensemble du projet. A REGARDER SI PROBLEME DE CHEMIN.
+
+**telechargement_valeur_fonciere.py** : 
+Télécharge automatiquement les données DVF (Demandes de Valeurs Foncières) par département depuis l’API data.gouv.fr, puis applique un premier nettoyage pour ne conserver que les ventes de maisons et d’appartements. Le script nettoie les champs numériques, crée des variables temporelles et calcule les prix au m².
+Output : base DVF nettoyée au format Parquet (df_vf.parquet).
+
+**traitement_open_street_map.py** : 
+Extrait les points d’intérêt pertinents (transports, commerces, écoles, santé, espaces verts, etc.) à partir du fichier OpenStreetMap France (.pbf), puis nettoie les doublons spatiaux. Les transactions DVF sont ensuite enrichies par des variables géographiques telles que le nombre de POI dans un rayon donné et la distance minimale au POI le plus proche, grâce à des structures KD-Tree.
+Output : base DVF enrichie géographiquement (df_vf_oms.parquet).
+
+**traitement_economie_global.py** :
+Nettoie et harmonise plusieurs séries macro-économiques (production de crédits immobiliers, taux de crédit, variation des encours, inflation) en format mensuel. Les différentes sources sont fusionnées après conversion des dates et filtrage temporel afin de produire un jeu de données économique cohérent.
+Output : dataset macro-économique mensuel (df_eco.csv).
+
+**fusion_vf_eco_insee.py** : 
+Fusionne la base DVF enrichie par OSM avec les indicateurs macro-économiques mensuels ainsi que les statistiques socio-économiques de l’INSEE aux niveaux communal et départemental. Le script gère l’harmonisation des codes géographiques et des types de données pour produire une base complète et cohérente.
+Output : dataset fusionné DVF + OSM + Économie + INSEE (df_vf_oms_eco_insee.parquet).
+
+**fin_nettoyage.py** : Applique le nettoyage final du dataset en traitant les valeurs manquantes, en corrigeant les incohérences résiduelles et en supprimant les valeurs aberrantes de la valeur foncière. Le script effectue également des transformations utiles au machine learning (projection spatiale, logarithme des prix, encodage des variables catégorielles).
+Output : dataset final propre et prêt pour la modélisation (df_final_propre.parquet).
+
+
+Le dernier fichier `df_final_propre.parquet` est le dataset final prêt pour le machine learning.
+
+
+## SOURCES & REFERENCES
+
+Valeurs Foncières (DVF) :
+- Departements : https://www.data.gouv.fr/datasets/departements-de-france
+- Data Gouv : https://dvf-api.data.gouv.fr/dvf/csv/?dep=1
+
+OpenStreetMap (OSM) :
+- Open Street Map : https://download.geofabrik.de/europe/france.html
+
+INSEE : 
+- Niveau de vie : https://www.insee.fr/fr/statistiques?debut=0&theme=1
+
+Economie Globale :
+- Banque de France : https://www.banque-france.fr/statistiques/telechargement
