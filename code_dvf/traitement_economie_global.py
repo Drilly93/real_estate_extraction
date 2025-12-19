@@ -1,5 +1,5 @@
 import pandas as pd
-
+from config import PATH_DIR_ECO
 
 def convert_french_date(date_str):
     """
@@ -35,9 +35,9 @@ def convert_dates_dataframe(df, column_name):
     return df
 
 
-df_production = pd.read_csv('data/Economie_global/production_credit_habitat.csv', sep=';')
-df_taux_credit = pd.read_csv('data/Economie_global/taux_des_credit.csv', sep=';')
-df_variation_encours = pd.read_csv('data/Economie_global/variation_encours_credit.csv' ,   sep=';')
+df_production = pd.read_csv(PATH_DIR_ECO / 'production_credit_habitat.csv', sep=';')
+df_taux_credit = pd.read_csv(PATH_DIR_ECO / 'taux_des_credit.csv', sep=';')
+df_variation_encours = pd.read_csv(PATH_DIR_ECO / 'variation_encours_credit.csv' ,   sep=';')
 
 print(df_production.head())
 # Exemple d'utilisation sur votre DataFrame df_production :
@@ -66,11 +66,11 @@ df_final = pd.merge(df_final, df_variation_encours, on='Category', how='inner')
 df_final = df_final.rename(columns={'Category': 'Date'})
 df_final = df_final.drop(columns=["Crédit à l'habitat total","Crédits à l'habitat renégociés"])
 
-df_inflation = pd.read_csv('data/Economie_global/inflation.csv')
+df_inflation = pd.read_csv(PATH_DIR_ECO / 'inflation.csv')
 df_inflation['Date'] = pd.to_datetime(df_inflation['Date'], format='%Y-%m')
 df_inflation = df_inflation[df_inflation['Date'] >= '2015-01-01']
 
 print(df_inflation.head())
 df_final = pd.merge(df_final, df_inflation, on='Date', how='inner')
-df_final.to_csv('data/Economie_global/df_eco.csv', sep=';', index=False)
+df_final.to_csv(PATH_DIR_ECO / 'df_eco.csv', sep=';', index=False)
 print(df_final.head())

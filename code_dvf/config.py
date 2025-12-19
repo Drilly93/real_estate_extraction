@@ -3,7 +3,7 @@ import polars as pl
 
 CURRENT_DIR = Path(__file__).resolve().parent
 
-BASE_PATH = CURRENT_DIR
+BASE_PATH = CURRENT_DIR.parent
 BASE_PATH_DATA = BASE_PATH / "data"
 
 
@@ -180,17 +180,6 @@ DISTANCE_POINT_INTERET = {
 
 
 # Voir https://wiki.openstreetmap.org/wiki/Map_features pour plus d'information
-TAGS_UTILISE_ANCIENNE_VERSION_1= {
-    "gares": {"public_transport": ["station"]},
-    "commerces": {"shop": True},
-    "education": {"amenity": ["school", "kindergarten", "college", "university"]},
-    "espaces_verts": {"leisure": ["park", "garden", "recreation_ground"]},
-    "sante": {"amenity": ["hospital", "clinic", "doctors"]},
-    "pharmacies":{"amenity": ["pharmacy"]},
-    "aeroports": {"aeroway": ["aerodrome"]},
-    "routes_principales": {"highway" : ['motorway', 'trunk']},
-    "industries": {'landuse' : ['industrial']} 
-}
 
 TAGS_UTILISE = TAGS_UTILISE = {
     "gares": {"public_transport": ["station"]},
