@@ -89,6 +89,73 @@ Le dernier fichier `df_final_propre.parquet` est le dataset final prêt pour le 
 
 **create_deferla_database.py** : Permet de générer la database **deferla.db** en se basant sur les fonctions définies dans **deferla_database.py**  et sur le dataset **deferla.json**
 
+
+## Folder : De FerlaReal 
+
+Ce répertoire contient le module d'extraction de données pour l'agence immobilière **DeFerla**.
+
+### Description du projet
+
+Ce module a pour objectif de récupérer les annonces immobilières via **Scrapy**, en contournant les limitations techniques classiques.
+
+### Méthodologie Technique
+
+#### 1. Acquisition (API Reverse Engineering) : Le Saint Graal https://immobilier.altelis.com/deferla
+
+* **Le Problème :** Le site utilisant un rendu dynamique (**JavaScript**), le scraping HTML classique est inefficace (page vide).
+* **La Solution :** Ce script intercepte les flux XHR pour interroger directement l'API JSON du fournisseur (*Altelis*).
+* **Avantage :** Récupération de données brutes, structurées et complètes.
+
+#### 2. Traitement des images (Custom Pipeline)
+
+* **Implémentation :** Utilisation d'une `ImagesPipeline` Scrapy personnalisée.
+* **Performance :** Téléchargement asynchrone des visuels.
+* **Organisation automatique :** Création d'un dossier par annonce (`ID_ANNONCE/`) et renommage séquentiel des fichiers pour une base de données propre.
+
+#### 3. Conformité (RGPD)
+
+* **Filtrage automatique :** Exclusion des données personnelles des agents (emails, téléphones directs) avant l'export des données.
+
+---
+
+### Installation
+
+Le projet nécessite **Python 3.x**.
+
+1.  Activer l'environnement virtuel.
+2.  Installer les dépendances (Scrapy et Pillow pour le traitement d'images) :
+
+```bash
+pip install scrapy pillow
+```
+
+## Utilisation
+
+Pour lancer l'extraction et générer le fichier de données :
+
+```bash
+cd .\deferla\immo_project\
+scrapy crawl deferla -O results/deferla.json
+```
+
+## Structure des résultats
+
+En sortie, le script génère :
+
+* `results/deferla.json` : Contient les métadonnées des annonces.
+* `images_data/` : Dossier contenant les images organisées.
+
+**Arborescence de sortie :**
+
+```text
+/images_data
+    ├── VA1980/
+    │   ├── image_0.jpg
+    │   └── image_1.jpg
+    ├── VA2042/
+    │   └── ...
+```
+
 ## SOURCES & REFERENCES
 
 Valeurs Foncières (DVF) :
