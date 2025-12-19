@@ -3,4 +3,5 @@ venv/
 data/ValeursFoncieresParDepartement/
 data/departements_france/
 data/DataFrameFinal/
+data/Economie_global/df_eco.csv
 deferla/immo_project/images_data/**

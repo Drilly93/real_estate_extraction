@@ -182,7 +182,7 @@ def nettoyage_final():
     
 
 if __name__ == "__main__":
-    #nettoyage_final()  
+    nettoyage_final()  
 
     # Pour des raisons d'envoi, nous allons reduire le nombre de ligne du df final propre a 10 000
     df = pl.read_parquet(PATH_DIR_DF_FINAL  / "df_final_propre.parquet")
