@@ -14,6 +14,8 @@ pip install -r requirements.txt
 
 Executer sequentiellement les scripts suivants dans l’ordre indiqué pour reproduire le pipeline complet de traitement des données immobilières :
 
+Dans le folder code_dvf: >>> cd code_dvf
+
 >>> python telechargement_valeur_fonciere.py  
 
 >>> python traitement_open_street_map.py  
@@ -24,9 +26,12 @@ Executer sequentiellement les scripts suivants dans l’ordre indiqué pour repr
 
 >>> python fin_nettoyage.py
 
+Dans le folder code_db: >>> cd code_db
+
 >>> python create_dvf_database.py
 
 >>> python create_deferla_database.py
+
 ( Optionnel : Etape de scraping Deferla a effectuer avant , cf voir_en_dessous)
 
 ## Fichier DVF generes : 
@@ -172,3 +177,6 @@ INSEE :
 
 Economie Globale :
 - Banque de France : https://www.banque-france.fr/statistiques/telechargement
+
+Site d'annonces immobilières :
+- Deferla : https://immobilier.altelis.com/deferla

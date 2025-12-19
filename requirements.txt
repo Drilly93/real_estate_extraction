@@ -17,3 +17,4 @@ selenium>=4.15
 webdriver-manager>=4.0
 scrapy
 pillows
+sqlite3
