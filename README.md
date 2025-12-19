@@ -1,4 +1,5 @@
 # Real Estate Data Acquisition & Price Prediction (Pipeline)
+Lien vers le GitHub ( a utiliser de preference ) : https://github.com/Drilly93/real_estate_extraction.git
 
 ## Description du projet
 **Objectif** : Construire un pipeline complet de traitement et d’enrichissement des données immobilières en France, depuis le téléchargement des données brutes jusqu’à la génération d’un dataset final prêt pour la modélisation prédictive des prix de l’immobilier en machine learning.
