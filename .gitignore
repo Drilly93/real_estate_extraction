@@ -1,5 +1,6 @@
 others/
 venv/
-data/ValeursFoncieresParDepartement/**
-data/departements_france/**
+data/ValeursFoncieresParDepartement/
+data/departements_france/
+data/DataFrameFinal/
 deferla/immo_project/images_data/**

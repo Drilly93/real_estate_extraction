@@ -28,66 +28,6 @@ COLUMN_DISTANCE = ['distance_min_gares','distance_min_commerces',
 def nombre_valeur_null_par_colonne(df):
     for col in df.columns:
         print(col,':',df[col].null_count())
-
-def visualisation_valeur_fonciere(df):
-    valeurs = df.select("valeur_fonciere").to_numpy().flatten()
-    '''
-    plt.figure(figsize=(10,5))
-    plt.hist(valeurs, bins=100, edgecolor="black")
-    plt.title("Distribution brute des valeurs foncières (€)")
-    plt.xlabel("Valeur foncière (€)")
-    plt.ylabel("Nombre de ventes")
-    plt.grid(True)
-    plt.show()
-    
-    '''
-    plt.figure(figsize=(10,5))
-    plt.hist(valeurs, bins=10000, edgecolor="black", log=True)
-    #plt.xscale("log")
-    plt.title("Distribution des valeurs foncières (€) - échelle log")
-    plt.xlabel("Valeur foncière (€)")
-    plt.ylabel("Nombre de ventes (log)")
-    plt.grid(True)
-    plt.show()
-
-def visualisation_valeur_fonciere_petite(df):
-    valeurs = df.select("valeur_fonciere").to_numpy().flatten()
-  
-    valeurs_petites = valeurs[valeurs < 10000]
-    seuil_001 = np.quantile(valeurs, 0.001)
-
-    plt.figure(figsize=(10, 5))
-    plt.hist(valeurs_petites, bins=50, edgecolor="black")
-    plt.title("Histogramme des valeurs foncières < 10 000 €")
-    plt.xlabel("Valeur foncière (€)")
-    plt.ylabel("Nombre de ventes")
-    plt.axvline(seuil_001, color="red", linestyle="--", linewidth=2,
-                label="Seuil 0.1% : " + str(int(round(seuil_001))) + " €")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-  
- 
-def visualisation_valeur_fonciere_grande(df):
-    valeurs = df.select("valeur_fonciere").to_numpy().flatten()
-  
-    valeurs_grandes = valeurs[valeurs > 1000000]
-    seuil_999 = np.quantile(valeurs, 0.999)
-
-    plt.figure(figsize=(10, 5))
-    plt.hist(valeurs_grandes, bins=50, edgecolor="black", log=True)
-    plt.xscale("log")
-    plt.axvline(seuil_999, color="red", linestyle="--", linewidth=2,
-                label="Seuil 99.9% : " + str(int(round(seuil_999))) + " €")
-    plt.title("Histogramme des valeurs foncières > 1 000 000 € (axe log-log)")
-    plt.xlabel("Valeur foncière (€) (log)")
-    plt.ylabel("Nombre de ventes (log)")
-    plt.legend()
-    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
-    plt.tight_layout()
-    plt.show()
- 
     
 def reglage_null_colonne_distance(df):
     for col in COLUMN_DISTANCE:
@@ -106,7 +46,7 @@ def reglage_null_colonne_distance(df):
 
 def reglage_null_revenu_median_commune(df):
     
-    # 1. Extraire le code département correctement (2 ou 3 chiffres)
+    # Extraire le code département correctement (2 ou 3 chiffres)
     df = df.with_columns([
         pl.when(pl.col("code_commune").str.slice(0,2).is_in(["97", "98"]))
         .then(pl.col("code_commune").str.slice(0,3))
@@ -114,16 +54,16 @@ def reglage_null_revenu_median_commune(df):
         .alias("code_departement_temporaire")
     ])
 
-    # 2. Calculer la moyenne du revenu_median_2021_commune par département
+    # Calculer la moyenne du revenu_median_2021_commune par département
     revenu_moyen_dep = (
         df.group_by("code_departement_temporaire")
         .agg(pl.col("revenu_median_2021_commune").mean().alias("revenu_median_dep"))
     )
 
-    # 3. Joindre la moyenne au DataFrame principal
+    # Joindre la moyenne au DataFrame principal
     df = df.join(revenu_moyen_dep, on="code_departement_temporaire", how="left")
 
-    # 4. Remplacer les nulls dans revenu_median_2021_commune
+    # Remplacer les nulls dans revenu_median_2021_commune
     df = df.with_columns([
         pl.when(pl.col("revenu_median_2021_commune").is_null())
         .then(pl.col("revenu_median_dep"))
@@ -131,7 +71,7 @@ def reglage_null_revenu_median_commune(df):
         .alias("revenu_median_2021_commune")
     ])
 
-    # 5. Nettoyer : supprimer les colonnes temporaires
+    # Nettoyer : supprimer les colonnes temporaires
     df = df.drop(["code_departement_temporaire", "revenu_median_dep"])
     return df
 
@@ -241,6 +181,10 @@ def nettoyage_final():
     nettoyer_valeur_fonciere(df,seuil_min = 1000)
     
 
-
 if __name__ == "__main__":
-    nettoyage_final()
+    #nettoyage_final()  
+
+    # Pour des raisons d'envoi, nous allons reduire le nombre de ligne du df final propre a 10 000
+    df = pl.read_parquet(PATH_DIR_DF_FINAL  / "df_final_propre.parquet")
+    df_reduit = df.sample(n=10000, with_replacement=False, seed=42)
+    df_reduit.write_parquet(PATH_DIR_DF_FINAL  / "df_final_propre_reduit.parquet")

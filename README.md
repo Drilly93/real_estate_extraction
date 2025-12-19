@@ -27,8 +27,9 @@ Executer sequentiellement les scripts suivants dans l’ordre indiqué pour repr
 >>> python create_dvf_database.py
 
 >>> python create_deferla_database.py
+( Optionnel : Etape de scraping Deferla a effectuer avant , cf voir_en_dessous)
 
-## Fichier generes : 
+## Fichier DVF generes : 
 
 Tous les fichiers generes sont situes dans le dossier data/
 Pour executer le pipeline complet, il faut garder l'arborescence presente dans le git ( et les fichiers associes ) :
@@ -58,6 +59,7 @@ Pour executer le pipeline complet, il faut garder l'arborescence presente dans l
 
 **fin_nettoyage.py** :
 -> DataFrameFinal/df_final_propre.parquet
+-> DataFrameFinal/df_final_propre_reduit.parquet ( version reduite pour envoie)
 
 
 ## Details des fichiers 
