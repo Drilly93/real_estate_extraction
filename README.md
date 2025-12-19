@@ -5,6 +5,8 @@
 
 La pipeline intègre plusieurs sources de données, notamment les valeurs foncières (DVF), les points d’intérêt géographiques (OpenStreetMap), les indicateurs macro-économiques (Banque de France) et les statistiques socio-économiques (INSEE).
 
+A partir des datasets, deux databases SQLite sont générées.
+
 ### Installation des dependances
 pip install -r requirements.txt
 
@@ -20,7 +22,11 @@ Executer sequentiellement les scripts suivants dans l’ordre indiqué pour repr
 
 >>> python fusion_vf_eco_insee.py  
 
->>> python fin_nettoyage.py  
+>>> python fin_nettoyage.py
+
+>>> python create_dvf_database.py
+
+>>> python create_deferla_database.py
 
 ## Fichier generes : 
 
@@ -77,9 +83,11 @@ Output : dataset fusionné DVF + OSM + Économie + INSEE (df_vf_oms_eco_insee.pa
 **fin_nettoyage.py** : Applique le nettoyage final du dataset en traitant les valeurs manquantes, en corrigeant les incohérences résiduelles et en supprimant les valeurs aberrantes de la valeur foncière. Le script effectue également des transformations utiles au machine learning (projection spatiale, logarithme des prix, encodage des variables catégorielles).
 Output : dataset final propre et prêt pour la modélisation (df_final_propre.parquet).
 
-
 Le dernier fichier `df_final_propre.parquet` est le dataset final prêt pour le machine learning.
 
+**create_dvf_database.py** : Permet de générer la database **dvf_immobilier.db** en se basant sur les fonctions définies dans **dvf_database.py**  et sur le dataset **df_final_propre.parquet**
+
+**create_deferla_database.py** : Permet de générer la database **deferla.db** en se basant sur les fonctions définies dans **deferla_database.py**  et sur le dataset **deferla.json**
 
 ## SOURCES & REFERENCES
 
